@@ -16,7 +16,7 @@ app.use(helmet({
 app.use(morgan("dev"));
 
 // Middleware
-const allowedOrigin = process.env.FRONTEND_URL;
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 app.use(cors({
     origin: allowedOrigin,
     credentials: true
@@ -28,7 +28,7 @@ app.use(express.json());
 // MongoDB connect
 const connectDB = async () => {
     try {
-        const uri = process.env.MONGO_URI;
+        const uri = process.env.MONGO_URI || "mongodb://localhost:27017/student_dashboard";
         await mongoose.connect(uri, {
             serverSelectionTimeoutMS: 5000
         });
@@ -68,7 +68,7 @@ app.use("/api/analytics", require("./routes/analytics"));
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-    app.get("*", (req, res) => {
+    app.get("(.*)", (req, res) => {
         res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
     });
 } else {
