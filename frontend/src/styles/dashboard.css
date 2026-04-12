@@ -1,0 +1,29 @@
+.dashboard {
+    padding: 20px;
+}
+
+.card-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #eee;
+    padding: 20px;
+    width: 200px;
+    border-radius: 8px;
+}
+
+.task-input {
+    padding: 10px;
+    width: 250px;
+}
+
+.add-btn {
+    padding: 10px;
+    margin-left: 10px;
+    background: #667eea;
+    color: white;
+    border: none;
+}
