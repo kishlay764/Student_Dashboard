@@ -1,21 +1,16 @@
 {
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.1",
-    "express": "^5.2.1",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.4.1",
-    "morgan": "^1.10.1"
-  },
+  "name": "student-dashboard-monorepo",
+  "version": "1.0.0",
+  "description": "Root workspace for Student Dashboard",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
+    "start": "npm start --prefix backend",
+    "server": "npm run dev --prefix backend",
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm install --prefix frontend && npm run build --prefix frontend",
-    "install-all": "npm install && npm install --prefix frontend"
+    "build": "npm run build --prefix frontend",
+    "install-backend": "npm install --prefix backend",
+    "install-frontend": "npm install --prefix frontend",
+    "install-all": "npm install && npm run install-backend && npm run install-frontend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

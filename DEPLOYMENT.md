@@ -17,12 +17,14 @@ This guide explains how to deploy the Student Dashboard to **Render** (Backend) 
 3. Connect your GitHub repository.
 4. Settings:
    - **Environment**: `Node`
+   - **Root Directory**: `backend`
    - **Build Command**: `npm install`
    - **Start Command**: `npm start`
 5. **Environment Variables**:
    - `MONGO_URI`: (Your SRV Connection String)
    - `JWT_SECRET`: (A long random string)
    - `FRONTEND_URL`: (Your Vercel URL - wait until step 3 to get this)
+   - `NODE_ENV`: `production`
 
 ---
 
@@ -45,7 +47,7 @@ This guide explains how to deploy the Student Dashboard to **Render** (Backend) 
 
 ---
 
-## local Development
+## Local Development
 To test locally with the new production-ready setup:
 1. Create a `.env` in the `backend/` directory:
    ```env
@@ -57,6 +59,9 @@ To test locally with the new production-ready setup:
    ```env
    REACT_APP_API_URL=http://localhost:5000
    ```
-3. Run:
-   - Backend: `npm start` (from `backend/`)
-   - Frontend: `npm start` (from `frontend/`)
+3. Run the entire project from the **root directory**:
+   ```bash
+   npm run install-all
+   npm run dev
+   ```
+   Or run them separately from their respective folders using `npm start`.
