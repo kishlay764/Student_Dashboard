@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { LogIn, Mail, Lock, ArrowRight } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import API_BASE_URL from "../config";
 
 function Login() {
     const nav = useNavigate();
@@ -15,7 +16,7 @@ function Login() {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/login", {
+            const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -24,17 +25,18 @@ function Login() {
             });
 
             const data = await res.json();
-            const errorMessage = data.message || data.error || "Login failed";
-
+            
             if (res.ok && data.token) {
                 localStorage.setItem("token", data.token);
-                localStorage.setItem("user", JSON.stringify(data.user)); // Store user details
+                localStorage.setItem("user", JSON.stringify(data.user)); 
                 nav("/dashboard");
             } else {
+                const errorMessage = data.message || data.error || "Login failed. Please check your credentials.";
                 alert(errorMessage);
             }
         } catch (err) {
-            alert("Unable to reach server. Make sure backend is running on port 5000.");
+            console.error("Login attempt failed:", err);
+            alert("Network error: Unable to reach the server. Please ensure the backend is running.");
         } finally {
             setLoading(false);
         }

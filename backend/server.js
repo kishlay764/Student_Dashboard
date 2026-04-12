@@ -1,21 +1,48 @@
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Production Middleware
+app.use(helmet({
+    contentSecurityPolicy: false, // For ease of use with external assets in demo
+}));
+app.use(morgan("dev"));
+
 // Middleware
-app.use(cors());
+const allowedOrigin = process.env.FRONTEND_URL;
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true
+}));
+
+
 app.use(express.json());
 
 // MongoDB connect
-mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/spfms", {
-    serverSelectionTimeoutMS: 5000
-})
-.then(()=>console.log("MongoDB Connected"))
-.catch(err=>console.error("MongoDB Connection Error:", err));
+const connectDB = async () => {
+    try {
+        const uri = process.env.MONGO_URI;
+        await mongoose.connect(uri, {
+            serverSelectionTimeoutMS: 5000
+        });
+        console.log("MERN MongoDB Connected Successfully");
+    } catch (err) {
+        console.error("MongoDB Connection Error:", err.message);
+        // Don't exit process in development, but log clearly
+        if (process.env.NODE_ENV === "production") {
+            process.exit(1);
+        }
+    }
+};
+
+connectDB();
 
 // Return a clear API error when DB is unavailable instead of generic route failures.
 app.use("/api", (req, res, next) => {
@@ -27,6 +54,11 @@ app.use("/api", (req, res, next) => {
     return next();
 });
 
+// Health Check
+app.get("/", (req, res) => {
+    res.json({ message: "Student Dashboard API is running." });
+});
+
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/tasks", require("./routes/tasks"));
@@ -35,7 +67,7 @@ app.use("/api/analytics", require("./routes/analytics"));
 // Serve Frontend in Production
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/build")));
-    
+
     app.get("*", (req, res) => {
         res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
     });

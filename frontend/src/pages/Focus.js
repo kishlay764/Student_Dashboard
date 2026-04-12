@@ -4,14 +4,11 @@ import {
     Play, 
     Pause, 
     RotateCcw, 
-    Music, 
     Volume2, 
-    VolumeX, 
-    ExternalLink,
-    Maximize2,
-    CheckCircle
+    VolumeX
 } from "lucide-react";
 import { cn } from "../utils/cn";
+import API_BASE_URL from "../config";
 
 const Focus = () => {
     const [seconds, setSeconds] = useState(1500);
@@ -32,7 +29,7 @@ const Focus = () => {
             
             // Award EXP logic
             if (mode === "work") {
-                fetch("/api/auth/award-exp", {
+                fetch(`${API_BASE_URL}/api/auth/award-exp`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

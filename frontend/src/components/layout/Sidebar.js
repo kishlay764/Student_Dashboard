@@ -5,7 +5,6 @@ import {
   CheckSquare, 
   BarChart2, 
   Clock, 
-  Settings, 
   LogOut,
   ChevronLeft,
   ChevronRight

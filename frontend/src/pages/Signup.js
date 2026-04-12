@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { UserPlus, Mail, Lock, ArrowRight, User } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
+import API_BASE_URL from "../config";
 
 function Signup() {
     const nav = useNavigate();
@@ -16,7 +17,7 @@ function Signup() {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/signup", {
+            const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

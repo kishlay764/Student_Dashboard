@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 
-const SECRET = "mysecretkey";
+const SECRET = process.env.JWT_SECRET || "mysecretkey";
 
 // SIGNUP
 router.post("/signup", async (req, res) => {

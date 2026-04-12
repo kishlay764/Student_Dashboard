@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, RotateCcw, Zap, Music, Volume2, VolumeX, Clock } from 'lucide-react';
 import { Button } from '../ui/Button';
+import API_BASE_URL from "../../config";
 
 const FocusTimer = () => {
   const [seconds, setSeconds] = useState(1500);
@@ -21,7 +22,7 @@ const FocusTimer = () => {
       setIsActive(false);
       // Award EXP for successful work session
       if (mode === 'work') {
-        fetch("/api/auth/award-exp", {
+        fetch(`${API_BASE_URL}/api/auth/award-exp`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

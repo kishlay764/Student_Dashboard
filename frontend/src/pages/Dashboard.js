@@ -5,6 +5,7 @@ import FocusTimer from "../components/dashboard/FocusTimer";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { cn } from "../utils/cn";
+import API_BASE_URL from "../config";
 
 function Dashboard() {
     const [task, setTask] = useState("");
@@ -17,29 +18,36 @@ function Dashboard() {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 // Fetch Tasks
-                const tasksRes = await fetch("/api/tasks", {
+                const tasksRes = await fetch(`${API_BASE_URL}/api/tasks`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
+                if (!tasksRes.ok) throw new Error("Could not fetch tasks");
                 const tasksData = await tasksRes.json();
                 if (Array.isArray(tasksData)) setTasks(tasksData);
 
                 // Fetch Stats
-                const statsRes = await fetch("/api/analytics/stats", {
+                const statsRes = await fetch(`${API_BASE_URL}/api/analytics/stats`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
+                if (!statsRes.ok) throw new Error("Could not fetch analytics");
                 const statsData = await statsRes.json();
                 setStats(statsData);
 
             } catch (err) {
-                console.error("Failed to fetch dashboard data");
+                console.error("Dashboard Fetch Error:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        if (token) {
+            fetchData();
+        } else {
+            setLoading(false);
+        }
     }, [token]);
 
     const addTask = async (e) => {
@@ -47,7 +55,7 @@ function Dashboard() {
         if (task === "") return;
 
         try {
-            const res = await fetch("/api/tasks", {
+            const res = await fetch(`${API_BASE_URL}/api/tasks`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +70,7 @@ function Dashboard() {
                 setTask("");
                 
                 // Refresh stats
-                const statsRes = await fetch("/api/analytics/stats", {
+                const statsRes = await fetch(`${API_BASE_URL}/api/analytics/stats`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const statsData = await statsRes.json();
@@ -77,7 +85,7 @@ function Dashboard() {
         // Improved logic: If completed -> To Do. Otherwise -> Completed.
         const newStatus = t.status === "Completed" ? "To Do" : "Completed";
         try {
-            const res = await fetch(`/api/tasks/${t._id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/tasks/${t._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -89,7 +97,7 @@ function Dashboard() {
             if (data._id) {
                 setTasks(tasks.map(task => task._id === t._id ? data : task));
                 // Refresh stats
-                const statsRes = await fetch("/api/analytics/stats", {
+                const statsRes = await fetch(`${API_BASE_URL}/api/analytics/stats`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const statsData = await statsRes.json();
@@ -102,13 +110,13 @@ function Dashboard() {
 
     const handleDelete = async (id) => {
         try {
-            await fetch(`/api/tasks/${id}`, {
+            await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` }
             });
             setTasks(prev => prev.filter(t => t._id !== id));
             // Refresh stats
-             const statsRes = await fetch("/api/analytics/stats", {
+             const statsRes = await fetch(`${API_BASE_URL}/api/analytics/stats`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             const statsData = await statsRes.json();

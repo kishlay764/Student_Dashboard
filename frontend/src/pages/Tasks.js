@@ -16,8 +16,6 @@ import {
 } from '@dnd-kit/sortable';
 import { 
     Plus, 
-    MoreVertical, 
-    Calendar, 
     CheckCircle2, 
     Circle,
     Columns,
@@ -26,6 +24,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '../utils/cn';
+import API_BASE_URL from "../config";
 
 // --- Sortable Task Item ---
 const SortableTask = ({ task, onToggle, onDelete }) => {
@@ -146,7 +145,7 @@ const Tasks = () => {
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch("/api/tasks", {
+            const res = await fetch(`${API_BASE_URL}/api/tasks`, {
                 headers: { "Authorization": `Bearer ${token}` }
             });
             const data = await res.json();
@@ -161,7 +160,7 @@ const Tasks = () => {
     const handleToggle = async (task) => {
         const newStatus = task.status === "Completed" ? "To Do" : "Completed";
         try {
-            const res = await fetch(`/api/tasks/${task._id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/tasks/${task._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -180,7 +179,7 @@ const Tasks = () => {
 
     const handleDelete = async (id) => {
         try {
-            await fetch(`/api/tasks/${id}`, {
+            await fetch(`${API_BASE_URL}/api/tasks/${id}`, {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` }
             });
@@ -225,7 +224,7 @@ const Tasks = () => {
 
             // Sync with Backend
             try {
-                await fetch(`/api/tasks/${activeId}`, {
+                await fetch(`${API_BASE_URL}/api/tasks/${activeId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
@@ -246,7 +245,7 @@ const Tasks = () => {
 
             // Sync reorder with backend
             try {
-                await fetch("/api/tasks/reorder", {
+                await fetch(`${API_BASE_URL}/api/tasks/reorder`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

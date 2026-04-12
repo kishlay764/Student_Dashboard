@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
-    TrendingUp, 
-    CheckCircle2, 
     Target, 
     Zap, 
     ArrowUpRight, 
     Award,
     Trophy
 } from "lucide-react";
-import { Bar, Line, Doughnut } from "react-chartjs-2";
+import { Line, Doughnut } from "react-chartjs-2";
+import API_BASE_URL from "../config";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -46,7 +45,7 @@ const Analytics = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await fetch("/api/analytics/stats", {
+                const res = await fetch(`${API_BASE_URL}/api/analytics/stats`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 const data = await res.json();
