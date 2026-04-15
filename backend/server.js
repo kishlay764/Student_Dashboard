@@ -9,13 +9,11 @@ const morgan = require("morgan");
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Production Middleware
 app.use(helmet({
-    contentSecurityPolicy: false, // For ease of use with external assets in demo
+    contentSecurityPolicy: false, 
 }));
 app.use(morgan("dev"));
 
-// Middleware
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 app.use(cors({
     origin: allowedOrigin,
@@ -25,7 +23,6 @@ app.use(cors({
 
 app.use(express.json());
 
-// MongoDB connect
 const connectDB = async () => {
     try {
         const uri = process.env.MONGO_URI || "mongodb://localhost:27017/student_dashboard";
@@ -35,7 +32,6 @@ const connectDB = async () => {
         console.log("MERN MongoDB Connected Successfully");
     } catch (err) {
         console.error("MongoDB Connection Error:", err.message);
-        // Don't exit process in development, but log clearly
         if (process.env.NODE_ENV === "production") {
             process.exit(1);
         }
@@ -44,7 +40,6 @@ const connectDB = async () => {
 
 connectDB();
 
-// Return a clear API error when DB is unavailable instead of generic route failures.
 app.use("/api", (req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
         return res.status(503).json({
@@ -54,17 +49,14 @@ app.use("/api", (req, res, next) => {
     return next();
 });
 
-// Health Check
 app.get("/", (req, res) => {
     res.json({ message: "Student Dashboard API is running." });
 });
 
-// Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/tasks", require("./routes/tasks"));
 app.use("/api/analytics", require("./routes/analytics"));
 
-// Serve Frontend in Production
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/build")));
 
@@ -72,13 +64,11 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
     });
 } else {
-    // 404 Handler for development (since React Dev Server handles frontend)
     app.use((req, res, next) => {
         res.status(404).json({ message: "Route not found" });
     });
 }
 
-// Global Error Handling Middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(err.status || 500).json({
