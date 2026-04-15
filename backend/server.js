@@ -14,12 +14,20 @@ app.use(helmet({
 }));
 app.use(morgan("dev"));
 
-const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001")
+    .split(",")
+    .map((url) => url.trim())
+    .filter(Boolean);
+
 app.use(cors({
-    origin: allowedOrigin,
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS origin not allowed: ${origin}`));
+    },
     credentials: true
 }));
-
 
 app.use(express.json());
 
@@ -60,7 +68,7 @@ app.use("/api/analytics", require("./routes/analytics"));
 if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(__dirname, "../frontend/build")));
 
-    app.get("/{*path}", (req, res) => {
+    app.get(/.*/, (req, res) => {
         res.sendFile(path.resolve(__dirname, "../frontend", "build", "index.html"));
     });
 } else {
