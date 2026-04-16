@@ -14,7 +14,7 @@ app.use(helmet({
 }));
 app.use(morgan("dev"));
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001")
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001,https://student-dashboard-eight-delta.vercel.app")
     .split(",")
     .map((url) => url.trim())
     .filter(Boolean);
