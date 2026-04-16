@@ -14,19 +14,34 @@ app.use(helmet({
 }));
 app.use(morgan("dev"));
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000,http://localhost:3001,https://student-dashboard-eight-delta.vercel.app")
-    .split(",")
-    .map((url) => url.trim())
-    .filter(Boolean);
+const allowedOrigins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://student-dashboard-eight-delta.vercel.app"
+];
+
+if (process.env.FRONTEND_URL) {
+    process.env.FRONTEND_URL.split(",").map(url => url.trim()).forEach(url => {
+        if (url && !allowedOrigins.includes(url)) {
+            allowedOrigins.push(url);
+        }
+    });
+}
+
+console.log("Allowed Origins:", allowedOrigins);
 
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
-            return callback(null, true);
+            callback(null, true);
+        } else {
+            console.log("Origin rejected:", origin);
+            callback(null, false);
         }
-        return callback(new Error(`CORS origin not allowed: ${origin}`));
     },
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
 }));
 
 app.use(express.json());
